@@ -1,0 +1,22 @@
+name: Orchestrate All 29 Senior Repos
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # Daily at 2 AM UTC
+  workflow_dispatch:
+
+jobs:
+  orchestrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Octokit
+        run: npm install @octokit/rest
+      - name: Calculate Overall Progress
+        run: node calculate-progress.js
+      - name: Update All README Badges
+        run: python update-badges.py --total-repos=29 --progress=89
+      - name: Commit & Push to All Repos
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: auto-orchestrate senior progress across 29 repositories"
